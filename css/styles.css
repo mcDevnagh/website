@@ -57,13 +57,9 @@ body {
     border-radius: 50%;
 }
 
-span.left {
-    text-align: left;
-    float: left;
-}
-span.right {
-    text-align: right;
-    float: right;
+.indented {
+    position: relative;
+    left: 2em;
 }
 
 .section {
@@ -72,6 +68,10 @@ span.right {
     align-items: center;
     padding: 10px;
     font-size: 28px;
+}
+
+.section-heading {
+    color: #e84545;
 }
 
 .section-body {
@@ -89,6 +89,7 @@ span.right {
     display: flex;
     flex-direction: column;
     font-weight: bold;
+    color: #e84545;
 }
 
 .subsection-body {
@@ -130,6 +131,7 @@ span.right {
     }
 
     .section-heading {
+        font-size: 2em;
         margin: 0 0 0 50px;
     }
 }
