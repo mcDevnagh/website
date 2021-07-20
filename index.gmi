@@ -1,0 +1,59 @@
+# Michael McDonagh
+
+## Education
+
+2021 | Masters of Science in Computer Science at Stony Brook University; GPA=3.68
+2020 | Bachelors of Science in Computer Science at Stony Brook University; GPA=3.34
+2016 | Chaminade High School
+
+
+## Work Experience
+
+### 2021 -      | Software Engineer at Applied Visions, Inc., Northport NY
+* Worked on Full Stack of multiple web applications connected to same database
+* Stack includes SQL, ASP.NET, Bootstrap, React.js
+
+### 2020 - 2021 | Software Engineering Intern at Applied Visions, Inc., Northport NY
+* Similiar responsibilities to above
+
+### 2019 - 2021 | Research Assistant at Stony Brook University
+* Worked on Full Stack of a geography-based browser game: Regio Vinco
+* Stack includes Firebase, Node.js, TypeScript, Express.js, Leaflet, GeoJSON
+
+### 2018        | CSE 219 Teaching Assistant at Stony Brook University
+* Held office hours during which students could ask me questions about the course
+* Instructed students during review sessions
+
+### 2017        | College Aide at New York City Department of Sanitation
+* Track changes in operation of equipment
+* General office work such as organizing files and taking minutes at meetings
+
+### 2015 - 2020 | Waiter and Catering Assistant at Riella’s Homestyle Restaurant, Levittown NY
+* Wait and bus tables
+* Fulfillment catering orders, track inventory
+
+## Skills
+### Computer Languages
+* C
+* C#
+* Java
+* JavaScript
+* TypeScript
+* Python
+* Bash
+* Go
+* SQL
+* OCaml
+* HTML
+* CSS
+* Sass
+### Other Technologies
+* git
+* GNU/Linux
+* ASP.NET
+* Node.js
+* Spring Boot
+* React
+* Firebase
+* mongoDB
+* Vim/neovim
