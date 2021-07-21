@@ -1,0 +1,28 @@
+# Heading
+## Sub-Heading
+### Sub-sub-heading
+
+text, plain old text
+
+* a list item
+* another list item
+
+More text
+
+> but they shall sit every man under his vine and under his fig tree,
+> and no one shall make them afraid,
+> for the mouth of the Lord of hosts has spoken
+Micah 4:4
+
+
+=> https://gemini.circumlunar.space/ HTTP URI
+=> gemini://medusae.space/index.gmi Gemini URI
+=> gemini.circumlunar.space/ No scheme URI
+=> /test Just a path URI
+=> GemText a page link
+
+```
+# is pronunced number sign, hashtag, pound or sharp depending on the context
+                                               c#
+```
+THE END
