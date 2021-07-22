@@ -22,7 +22,5 @@ func main() {
 	}
 	defer f.Close()
 
-	for _, gt := range ParseReader(f) {
-		fmt.Printf("%s\t%s\n", gt.Markup, gt.Raw)
-	}
+	fmt.Print(ParseReader(f).HTML())
 }

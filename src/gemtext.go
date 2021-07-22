@@ -41,6 +41,63 @@ type Line struct {
 
 type Gemtext []Line
 
+func (gemtext Gemtext) HTML() string {
+	buf := bytes.Buffer{}
+	for i := 0; i < len(gemtext); i += 1 {
+		switch gemtext[i].Markup {
+		case Text:
+			buf.Write(gemtext[i].Raw)
+			buf.WriteString("\n")
+		case Heading:
+			buf.WriteString("<h1>")
+			buf.Write(gemtext[i].Raw)
+			buf.WriteString("</h1>\n")
+		case SubHeading:
+			buf.WriteString("<h2>")
+			buf.Write(gemtext[i].Raw)
+			buf.WriteString("</h2>\n")
+		case SubSubHeading:
+			buf.WriteString("<h3>")
+			buf.Write(gemtext[i].Raw)
+			buf.WriteString("</h3>\n")
+		case Link:
+			buf.WriteString(`<a href="`)
+			parts := bytes.SplitN(gemtext[i].Raw, []byte{' '}, 3)
+			_, href, text := parts[0], parts[1], parts[2]
+			buf.Write(href)
+			buf.WriteString(`">`)
+			buf.Write(text)
+			buf.WriteString("</a>\n")
+		case List:
+			buf.WriteString("<ul>\n")
+			for ; i < len(gemtext) && gemtext[i].Markup == List; i += 1 {
+				buf.WriteString("\t<li>")
+				buf.Write(gemtext[i].Raw)
+				buf.WriteString("</li>\n")
+			}
+			buf.WriteString("</ul>\n")
+			i -= 1
+		case Blockquote:
+			buf.WriteString("<blockquote>\n")
+			for ; i < len(gemtext) && gemtext[i].Markup == Blockquote; i += 1 {
+				buf.Write(gemtext[i].Raw)
+				buf.WriteString("\n")
+			}
+			buf.WriteString("</blockquote>\n")
+			i -= 1
+		case Preformatted:
+			buf.WriteString("<pre>")
+			for ; i < len(gemtext) && gemtext[i].Markup == Preformatted; i += 1 {
+				buf.Write(gemtext[i].Raw)
+				buf.WriteString("\n")
+			}
+			buf.WriteString("</pre>\n")
+			i -= 1
+		}
+	}
+	return buf.String()
+}
+
 func ParseReader(r io.Reader) (gemtext Gemtext) {
 	scanner := bufio.NewScanner(r)
 	pre := false
