@@ -25,4 +25,3 @@ Micah 4:4
 # is pronunced number sign, hashtag, pound or sharp depending on the context
                                                c#
 ```
-THE END

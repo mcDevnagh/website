@@ -80,20 +80,23 @@ func (m Markup) Content() []byte {
 	return m.Raw
 }
 
-func (m Markup) HTML(w io.Writer) {
-	if tag := m.Tag(); tag != nil {
+func writeTag(w io.Writer, tag []byte, attr Attributes, closeTag bool) {
+	if tag != nil {
 		w.Write([]byte{'<'})
+		if closeTag {
+			w.Write([]byte{'/'})
+		}
 		w.Write(tag)
-		m.Attributes.Write(w)
+		attr.Write(w)
 		w.Write([]byte{'>'})
 	}
+}
+
+func (m Markup) HTML(w io.Writer) {
+	writeTag(w, m.Tag(), m.Attributes, false)
 	content := m.Content()
 	w.Write(content)
-	if tag := m.Tag(); tag != nil {
-		w.Write([]byte("</"))
-		w.Write(tag)
-		w.Write([]byte{'>'})
-	}
+	writeTag(w, m.Tag(), nil, true)
 	if content != nil {
 		w.Write([]byte{'\n'})
 	}
@@ -106,20 +109,20 @@ func (g Gemtext) HTML(w io.Writer) {
 	for _, markup := range g {
 		if markup.markupType != lastMarkup.markupType {
 			if tag := lastMarkup.SurroundTag(); tag != nil {
-				w.Write([]byte("</"))
-				w.Write(tag)
-				w.Write([]byte{'>'})
+				writeTag(w, tag, nil, true)
 				w.Write([]byte{'\n'})
 			}
 			if tag := markup.SurroundTag(); tag != nil {
-				w.Write([]byte{'<'})
-				w.Write(tag)
-				w.Write([]byte{'>'})
+				writeTag(w, tag, nil, false)
 				w.Write([]byte{'\n'})
 			}
 		}
 		markup.HTML(w)
 		lastMarkup = markup
+	}
+	if tag := lastMarkup.SurroundTag(); tag != nil {
+		writeTag(w, lastMarkup.SurroundTag(), nil, true)
+		w.Write([]byte{'\n'})
 	}
 }
 
