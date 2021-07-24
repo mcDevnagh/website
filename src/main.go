@@ -2,7 +2,6 @@ package main
 
 import (
 	"flag"
-	"fmt"
 	"os"
 )
 
@@ -22,5 +21,5 @@ func main() {
 	}
 	defer f.Close()
 
-	fmt.Print(ParseReader(f).HTML())
+	ParseReader(f).HTML(os.Stdout)
 }

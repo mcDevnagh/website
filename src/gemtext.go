@@ -6,136 +6,167 @@ import (
 	"io"
 )
 
-type Markup byte
+type Attributes map[string][]byte
+
+func (a Attributes) Write(w io.Writer) {
+	for key, value := range a {
+		w.Write([]byte{' '})
+		io.WriteString(w, key)
+		w.Write([]byte(`="`))
+		w.Write(value)
+		w.Write([]byte{'"'})
+	}
+}
+
+type markupType uint8
 
 const (
-	Text Markup = iota
-	Heading
-	SubHeading
-	SubSubHeading
-	Link
-	List
-	Blockquote
-	Preformatted
+	blank markupType = iota
+	heading
+	subheading
+	subsubheading
+	link
+	list
+	blockquote
+	preformatted
+	text
 )
 
-var markup = [...]string{
-	"Text",
-	"Heading",
-	"SubHeading",
-	"SubSubHeading",
-	"Link",
-	"List",
-	"Blockquote",
-	"Preformatted",
+var tag = [...][]byte{
+	nil,
+	[]byte("h1"),
+	[]byte("h2"),
+	[]byte("h3"),
+	[]byte("a"),
+	[]byte("li"),
+	nil,
+	nil,
+	[]byte("span"),
 }
 
-func (m Markup) String() string {
-	return markup[m]
+var surroundTag = [...][]byte{
+	nil,
+	nil,
+	nil,
+	nil,
+	nil,
+	[]byte("ul"),
+	[]byte("blockquote"),
+	[]byte("pre"),
+	nil,
 }
 
-type Line struct {
+type Markup struct {
 	Raw []byte
-	Markup
+	Attributes
+	markupType
 }
 
-type Gemtext []Line
+func (m Markup) Tag() []byte {
+	return tag[m.markupType]
+}
 
-func (gemtext Gemtext) HTML() string {
-	buf := bytes.Buffer{}
-	for i := 0; i < len(gemtext); i += 1 {
-		switch gemtext[i].Markup {
-		case Text:
-			buf.Write(gemtext[i].Raw)
-			buf.WriteString("\n")
-		case Heading:
-			buf.WriteString("<h1>")
-			buf.Write(gemtext[i].Raw)
-			buf.WriteString("</h1>\n")
-		case SubHeading:
-			buf.WriteString("<h2>")
-			buf.Write(gemtext[i].Raw)
-			buf.WriteString("</h2>\n")
-		case SubSubHeading:
-			buf.WriteString("<h3>")
-			buf.Write(gemtext[i].Raw)
-			buf.WriteString("</h3>\n")
-		case Link:
-			buf.WriteString(`<a href="`)
-			parts := bytes.SplitN(gemtext[i].Raw, []byte{' '}, 3)
-			_, href, text := parts[0], parts[1], parts[2]
-			buf.Write(href)
-			buf.WriteString(`">`)
-			buf.Write(text)
-			buf.WriteString("</a>\n")
-		case List:
-			buf.WriteString("<ul>\n")
-			for ; i < len(gemtext) && gemtext[i].Markup == List; i += 1 {
-				buf.WriteString("\t<li>")
-				buf.Write(gemtext[i].Raw)
-				buf.WriteString("</li>\n")
-			}
-			buf.WriteString("</ul>\n")
-			i -= 1
-		case Blockquote:
-			buf.WriteString("<blockquote>\n")
-			for ; i < len(gemtext) && gemtext[i].Markup == Blockquote; i += 1 {
-				buf.Write(gemtext[i].Raw)
-				buf.WriteString("\n")
-			}
-			buf.WriteString("</blockquote>\n")
-			i -= 1
-		case Preformatted:
-			buf.WriteString("<pre>")
-			for ; i < len(gemtext) && gemtext[i].Markup == Preformatted; i += 1 {
-				buf.Write(gemtext[i].Raw)
-				buf.WriteString("\n")
-			}
-			buf.WriteString("</pre>\n")
-			i -= 1
-		}
+func (m Markup) SurroundTag() []byte {
+	return surroundTag[m.markupType]
+}
+
+func (m Markup) Content() []byte {
+	if m.markupType == link {
+		return bytes.SplitN(m.Raw, []byte{' '}, 3)[2]
 	}
-	return buf.String()
+	if m.markupType == preformatted && bytes.Equal(m.Raw, []byte("```")) {
+		return nil
+	}
+	return m.Raw
+}
+
+func (m Markup) HTML(w io.Writer) {
+	if tag := m.Tag(); tag != nil {
+		w.Write([]byte{'<'})
+		w.Write(tag)
+		m.Attributes.Write(w)
+		w.Write([]byte{'>'})
+	}
+	content := m.Content()
+	w.Write(content)
+	if tag := m.Tag(); tag != nil {
+		w.Write([]byte("</"))
+		w.Write(tag)
+		w.Write([]byte{'>'})
+	}
+	if content != nil {
+		w.Write([]byte{'\n'})
+	}
+}
+
+type Gemtext []Markup
+
+func (g Gemtext) HTML(w io.Writer) {
+	var lastMarkup Markup
+	for _, markup := range g {
+		if markup.markupType != lastMarkup.markupType {
+			if tag := lastMarkup.SurroundTag(); tag != nil {
+				w.Write([]byte("</"))
+				w.Write(tag)
+				w.Write([]byte{'>'})
+				w.Write([]byte{'\n'})
+			}
+			if tag := markup.SurroundTag(); tag != nil {
+				w.Write([]byte{'<'})
+				w.Write(tag)
+				w.Write([]byte{'>'})
+				w.Write([]byte{'\n'})
+			}
+		}
+		markup.HTML(w)
+		lastMarkup = markup
+	}
 }
 
 func ParseReader(r io.Reader) (gemtext Gemtext) {
 	scanner := bufio.NewScanner(r)
 	pre := false
 	for scanner.Scan() {
-		raw := scanner.Bytes()
-		line := Line{raw, ParseMarkup(raw)}
-		if line.Markup == Preformatted {
+		markup := ParseLine(scanner.Bytes())
+		if markup.markupType == preformatted {
 			pre = !pre
 		}
 		if pre {
-			line.Markup = Preformatted
+			markup.markupType = preformatted
 		}
-		gemtext = append(gemtext, line)
+		gemtext = append(gemtext, markup)
 	}
 	return
 }
 
-func ParseMarkup(raw []byte) Markup {
+func ParseLine(raw []byte) Markup {
+	if len(raw) == 0 {
+		return Markup{raw, nil, blank}
+	}
+
+	attr := make(Attributes)
+
 	if bytes.HasPrefix(raw, []byte("# ")) {
-		return Heading
+		return Markup{raw, attr, heading}
 	}
 	if bytes.HasPrefix(raw, []byte("## ")) {
-		return SubHeading
+		return Markup{raw, attr, subheading}
 	}
 	if bytes.HasPrefix(raw, []byte("### ")) {
-		return SubSubHeading
+		return Markup{raw, attr, subsubheading}
 	}
 	if bytes.HasPrefix(raw, []byte("=> ")) {
-		return Link
+		attr["href"] = bytes.SplitN(raw, []byte{' '}, 3)[1]
+		return Markup{raw, attr, link}
 	}
 	if bytes.HasPrefix(raw, []byte("* ")) {
-		return List
+		return Markup{raw, attr, list}
 	}
 	if bytes.HasPrefix(raw, []byte("> ")) {
-		return Blockquote
+		return Markup{raw, attr, blockquote}
 	}
 	if bytes.HasPrefix(raw, []byte("```")) {
-		return Preformatted
+		return Markup{raw, attr, preformatted}
 	}
-	return Text
+	return Markup{raw, attr, text}
 }
