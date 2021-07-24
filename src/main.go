@@ -8,7 +8,7 @@ import (
 var templateFile string
 
 func init() {
-	flag.StringVar(&templateFile, "t", "",
+	flag.StringVar(&templateFile, "t", "test.gmi",
 		"Gemtext-Like file to convert to HTML, Gemtext, and/or PDF")
 }
 

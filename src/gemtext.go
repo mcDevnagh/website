@@ -71,13 +71,23 @@ func (m Markup) SurroundTag() []byte {
 }
 
 func (m Markup) Content() []byte {
-	if m.markupType == link {
-		return bytes.SplitN(m.Raw, []byte{' '}, 3)[2]
-	}
 	if m.markupType == preformatted && bytes.Equal(m.Raw, []byte("```")) {
 		return nil
 	}
-	return m.Raw
+
+	space := []byte{' '}
+
+	content := m.Raw
+	attrCount := len(m.Attributes)
+	if m.markupType == link {
+		content = bytes.SplitN(m.Raw, space, 3)[2]
+		attrCount -= 1
+	}
+	for i := 0; i < attrCount; i++ {
+		content = bytes.TrimSpace(content)
+		content = content[:bytes.LastIndex(content, space)]
+	}
+	return content
 }
 
 func writeTag(w io.Writer, tag []byte, attr Attributes, closeTag bool) {
@@ -142,12 +152,31 @@ func ParseReader(r io.Reader) (gemtext Gemtext) {
 	return
 }
 
+var selectors = []byte{'#', '.'}
+var attrKeys = map[byte]string{
+	'#': "id",
+	'.': "class",
+}
+
 func ParseLine(raw []byte) Markup {
 	if len(raw) == 0 {
 		return Markup{raw, nil, blank}
 	}
+	if bytes.HasPrefix(raw, []byte("```")) {
+		return Markup{raw, nil, preformatted}
+	}
 
-	attr := make(Attributes)
+	var attr Attributes
+	for words := bytes.Split(bytes.TrimSpace(raw), []byte{' '}); len(words) > 0; words = words[:len(words)-1] {
+		word := words[len(words)-1]
+		if len(word) <= 1 || !bytes.Contains(selectors, word[0:1]) {
+			break
+		}
+		if attr == nil {
+			attr = make(map[string][]byte)
+		}
+		attr[attrKeys[word[0]]] = word[1:]
+	}
 
 	if bytes.HasPrefix(raw, []byte("# ")) {
 		return Markup{raw, attr, heading}
@@ -159,6 +188,9 @@ func ParseLine(raw []byte) Markup {
 		return Markup{raw, attr, subsubheading}
 	}
 	if bytes.HasPrefix(raw, []byte("=> ")) {
+		if attr == nil {
+			attr = make(Attributes)
+		}
 		attr["href"] = bytes.SplitN(raw, []byte{' '}, 3)[1]
 		return Markup{raw, attr, link}
 	}
@@ -167,9 +199,6 @@ func ParseLine(raw []byte) Markup {
 	}
 	if bytes.HasPrefix(raw, []byte("> ")) {
 		return Markup{raw, attr, blockquote}
-	}
-	if bytes.HasPrefix(raw, []byte("```")) {
-		return Markup{raw, attr, preformatted}
 	}
 	return Markup{raw, attr, text}
 }
