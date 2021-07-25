@@ -56,6 +56,8 @@ var surroundTag = [...][]byte{
 	nil,
 }
 
+var markupLen = [...]int{0, 2, 3, 4, 3, 2, 2, 0, 0}
+
 type Markup struct {
 	Raw []byte
 	Attributes
@@ -77,11 +79,13 @@ func (m Markup) Content() []byte {
 
 	space := []byte{' '}
 
-	content := m.Raw
+	var content []byte
 	attrCount := len(m.Attributes)
 	if m.markupType == link {
 		content = bytes.SplitN(m.Raw, space, 3)[2]
 		attrCount -= 1
+	} else {
+		content := m.Raw[markupLen[m.markupType]:]
 	}
 	for i := 0; i < attrCount; i++ {
 		content = bytes.TrimSpace(content)
