@@ -34,26 +34,26 @@
 
 ## Skills
 ### Computer Languages
-* C
-* C#
-* Java
-* JavaScript
-* TypeScript
-* Python
-* Bash
-* Go
-* SQL
-* OCaml
-* HTML
-* CSS
-* Sass
-### Other Technologies
-* git
-* GNU/Linux
-* ASP.NET
-* Node.js
-* Spring Boot
-* React
-* Firebase
-* mongoDB
-* Vim/neovim
+* C #c
+* C# #c-sharp
+* Java #java
+* JavaScript #javascript
+* TypeScript #typescript
+* Python #python
+* Bash #bash
+* Go #go
+* SQL #sql
+* OCaml #ocaml
+* HTML #html
+* CSS #css
+* Sass #sass
+### other technologies
+* git #git
+* GNU/Linux #gnu-linux
+* ASP.NET #asp-net
+* Node.js #node-js
+* Spring Boot #spring-boot
+* React #react
+* Firebase #firebase
+* mongoDB #mongodb
+* Vim/neovim #vim-neovim
