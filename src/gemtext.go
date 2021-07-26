@@ -41,7 +41,7 @@ var tag = [...][]byte{
 	[]byte("li"),
 	nil,
 	nil,
-	[]byte("span"),
+	[]byte("p"),
 }
 
 var surroundTag = [...][]byte{
