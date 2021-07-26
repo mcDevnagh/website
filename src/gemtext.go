@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"bytes"
 	"io"
+	"unicode"
 )
 
 type Attributes map[string][]byte
@@ -56,12 +57,11 @@ var surroundTag = [...][]byte{
 	nil,
 }
 
-var markupLen = [...]int{0, 2, 3, 4, 3, 2, 2, 0, 0}
-
 type Markup struct {
 	Raw []byte
 	Attributes
 	markupType
+	start, end int
 }
 
 func (m Markup) Tag() []byte {
@@ -73,25 +73,11 @@ func (m Markup) SurroundTag() []byte {
 }
 
 func (m Markup) Content() []byte {
-	if m.markupType == preformatted && bytes.Equal(m.Raw, []byte("```")) {
+	if m.markupType == preformatted && bytes.HasPrefix(m.Raw, []byte("```")) {
 		return nil
 	}
 
-	space := []byte{' '}
-
-	var content []byte
-	attrCount := len(m.Attributes)
-	if m.markupType == link {
-		content = bytes.SplitN(m.Raw, space, 3)[2]
-		attrCount -= 1
-	} else {
-		content := m.Raw[markupLen[m.markupType]:]
-	}
-	for i := 0; i < attrCount; i++ {
-		content = bytes.TrimSpace(content)
-		content = content[:bytes.LastIndex(content, space)]
-	}
-	return content
+	return bytes.TrimSpace(m.Raw[m.start:m.end])
 }
 
 func writeTag(w io.Writer, tag []byte, attr Attributes, closeTag bool) {
@@ -107,6 +93,9 @@ func writeTag(w io.Writer, tag []byte, attr Attributes, closeTag bool) {
 }
 
 func (m Markup) HTML(w io.Writer) {
+	if m.markupType == blank {
+		w.Write([]byte("<br />\n"))
+	}
 	writeTag(w, m.Tag(), m.Attributes, false)
 	content := m.Content()
 	w.Write(content)
@@ -150,6 +139,8 @@ func ParseReader(r io.Reader) (gemtext Gemtext) {
 		}
 		if pre {
 			markup.markupType = preformatted
+			markup.start = 0
+			markup.end = len(markup.Raw)
 		}
 		gemtext = append(gemtext, markup)
 	}
@@ -164,45 +155,62 @@ var attrKeys = map[byte]string{
 
 func ParseLine(raw []byte) Markup {
 	if len(raw) == 0 {
-		return Markup{raw, nil, blank}
+		return Markup{}
 	}
 	if bytes.HasPrefix(raw, []byte("```")) {
-		return Markup{raw, nil, preformatted}
+		return Markup{raw, nil, preformatted, 0, 0}
 	}
 
 	var attr Attributes
-	for words := bytes.Split(bytes.TrimSpace(raw), []byte{' '}); len(words) > 0; words = words[:len(words)-1] {
+	end := len(raw)
+	for words := bytes.Split(raw, []byte{' '}); len(words) > 0; words = words[:len(words)-1] {
 		word := words[len(words)-1]
-		if len(word) <= 1 || !bytes.Contains(selectors, word[0:1]) {
+		if len(word) == 0 {
+			end -= 1
+			continue
+		}
+		if len(word) == 1 || !bytes.Contains(selectors, word[0:1]) {
 			break
 		}
 		if attr == nil {
 			attr = make(map[string][]byte)
 		}
 		attr[attrKeys[word[0]]] = word[1:]
+		end -= len(word) + 1
 	}
 
-	if bytes.HasPrefix(raw, []byte("# ")) {
-		return Markup{raw, attr, heading}
+	if bytes.HasPrefix(raw, []byte("###")) {
+		return Markup{raw, attr, subsubheading, 4, end}
 	}
-	if bytes.HasPrefix(raw, []byte("## ")) {
-		return Markup{raw, attr, subheading}
+	if bytes.HasPrefix(raw, []byte("##")) {
+		return Markup{raw, attr, subheading, 3, end}
 	}
-	if bytes.HasPrefix(raw, []byte("### ")) {
-		return Markup{raw, attr, subsubheading}
+	if bytes.HasPrefix(raw, []byte("#")) {
+		return Markup{raw, attr, heading, 2, end}
 	}
-	if bytes.HasPrefix(raw, []byte("=> ")) {
+	if bytes.HasPrefix(raw, []byte("=>")) {
 		if attr == nil {
 			attr = make(Attributes)
 		}
-		attr["href"] = bytes.SplitN(raw, []byte{' '}, 3)[1]
-		return Markup{raw, attr, link}
+		hrefStart, hrefEnd := 0, 0
+		for i, char := range string(raw[2:]) {
+			if hrefStart == 0 {
+				if unicode.IsSpace(char) {
+					continue
+				}
+				hrefStart = i + 2
+			} else if unicode.IsSpace(char) {
+				hrefEnd = i + 2
+			}
+		}
+		attr["href"] = raw[hrefStart:hrefEnd]
+		return Markup{raw, attr, link, hrefEnd, end}
 	}
 	if bytes.HasPrefix(raw, []byte("* ")) {
-		return Markup{raw, attr, list}
+		return Markup{raw, attr, list, 2, end}
 	}
-	if bytes.HasPrefix(raw, []byte("> ")) {
-		return Markup{raw, attr, blockquote}
+	if bytes.HasPrefix(raw, []byte(">")) {
+		return Markup{raw, attr, blockquote, 1, end}
 	}
-	return Markup{raw, attr, text}
+	return Markup{raw, attr, text, 0, end}
 }
