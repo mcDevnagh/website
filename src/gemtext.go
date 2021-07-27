@@ -82,6 +82,10 @@ func (m Markup) Content() []byte {
 	return bytes.TrimSpace(m.Raw[m.start:m.end])
 }
 
+func (m Markup) Gemtext(w io.Writer) {
+	w.Write(m.Raw[0:m.end])
+}
+
 func writeTag(w io.Writer, tag []byte, attr Attributes, closeTag bool) {
 	if tag != nil {
 		w.Write([]byte{'<'})
@@ -108,6 +112,13 @@ func (m Markup) HTML(w io.Writer) {
 }
 
 type Gemtext []Markup
+
+func (g Gemtext) Gemtext(w io.Writer) {
+	for _, m := range g {
+		m.Gemtext(w)
+		w.Write([]byte{'\n'})
+	}
+}
 
 func (g Gemtext) HTML(w io.Writer) {
 	var lastMarkup Markup
@@ -160,7 +171,7 @@ func ParseLine(raw []byte) Markup {
 		return Markup{}
 	}
 	if bytes.HasPrefix(raw, []byte("```")) {
-		return Markup{raw, nil, preformatted, 0, 0}
+		return Markup{raw, nil, preformatted, 0, len(raw)}
 	}
 
 	var attr Attributes
