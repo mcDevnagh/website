@@ -73,10 +73,12 @@ func (m Markup) SurroundTag() []byte {
 }
 
 func (m Markup) Content() []byte {
-	if m.markupType == preformatted && bytes.HasPrefix(m.Raw, []byte("```")) {
-		return nil
+	if m.markupType == preformatted {
+		if bytes.HasPrefix(m.Raw, []byte("```")) {
+			return nil
+		}
+		return m.Raw[m.start:m.end]
 	}
-
 	return bytes.TrimSpace(m.Raw[m.start:m.end])
 }
 
