@@ -111,18 +111,18 @@ func (m Markup) HTML(w io.Writer) {
 	}
 }
 
-type Gemtext []Markup
+type Markups []Markup
 
-func (g Gemtext) Gemtext(w io.Writer) {
-	for _, m := range g {
-		m.Gemtext(w)
+func (m Markups) Gemtext(w io.Writer) {
+	for _, markup := range m {
+		markup.Gemtext(w)
 		w.Write([]byte{'\n'})
 	}
 }
 
-func (g Gemtext) HTML(w io.Writer) {
+func (m Markups) HTML(w io.Writer) {
 	var lastMarkup Markup
-	for _, markup := range g {
+	for _, markup := range m {
 		if markup.markupType != lastMarkup.markupType {
 			if tag := lastMarkup.SurroundTag(); tag != nil {
 				writeTag(w, tag, nil, true)
@@ -137,16 +137,16 @@ func (g Gemtext) HTML(w io.Writer) {
 		lastMarkup = markup
 	}
 	if tag := lastMarkup.SurroundTag(); tag != nil {
-		writeTag(w, lastMarkup.SurroundTag(), nil, true)
+		writeTag(w, tag, nil, true)
 		w.Write([]byte{'\n'})
 	}
 }
 
-func ParseReader(r io.Reader) (gemtext Gemtext) {
+func ParseFromGemtext(r io.Reader) (m Markups) {
 	scanner := bufio.NewScanner(r)
 	pre := false
 	for scanner.Scan() {
-		markup := ParseLine(scanner.Bytes())
+		markup := ParseGemtextLine(scanner.Bytes())
 		if markup.markupType == preformatted {
 			pre = !pre
 		}
@@ -155,7 +155,7 @@ func ParseReader(r io.Reader) (gemtext Gemtext) {
 			markup.start = 0
 			markup.end = len(markup.Raw)
 		}
-		gemtext = append(gemtext, markup)
+		m = append(m, markup)
 	}
 	return
 }
@@ -166,7 +166,7 @@ var attrKeys = map[byte]string{
 	'.': "class",
 }
 
-func ParseLine(raw []byte) Markup {
+func ParseGemtextLine(raw []byte) Markup {
 	if len(raw) == 0 {
 		return Markup{}
 	}

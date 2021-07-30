@@ -21,7 +21,7 @@ func main() {
 	}
 	defer f.Close()
 
-	gt := ParseReader(f)
-	gt.Gemtext(os.Stdout)
-	gt.HTML(os.Stdout)
+	m := ParseFromGemtext(f)
+	m.Gemtext(os.Stdout)
+	m.HTML(os.Stdout)
 }
