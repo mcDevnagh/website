@@ -21,7 +21,9 @@ Micah 4:4
 => /test Just a path URI
 => GemText a page link
 
-```
-# is pronunced number sign, hashtag, pound or sharp depending on the context
-                                               c#
+``` bash
+#!/bin/sh
+
+echo "Hello World!"
+
 ```
