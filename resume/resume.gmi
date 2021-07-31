@@ -9,26 +9,26 @@
 
 ## Work Experience
 
-### 2021 -      | Software Engineer at Applied Visions, Inc., Northport NY
+2021 -      | Software Engineer at Applied Visions, Inc., Northport NY
 * Worked on Full Stack of multiple web applications connected to same database
 * Stack includes SQL, ASP.NET, Bootstrap, React.js
 
-### 2020 - 2021 | Software Engineering Intern at Applied Visions, Inc., Northport NY
+2020 - 2021 | Software Engineering Intern at Applied Visions, Inc., Northport NY
 * Similiar responsibilities to above
 
-### 2019 - 2021 | Research Assistant at Stony Brook University
+2019 - 2021 | Research Assistant at Stony Brook University
 * Worked on Full Stack of a geography-based browser game: Regio Vinco
 * Stack includes Firebase, Node.js, TypeScript, Express.js, Leaflet, GeoJSON
 
-### 2018        | CSE 219 Teaching Assistant at Stony Brook University
+2018        | CSE 219 Teaching Assistant at Stony Brook University
 * Held office hours during which students could ask me questions about the course
 * Instructed students during review sessions
 
-### 2017        | College Aide at New York City Department of Sanitation
+2017        | College Aide at New York City Department of Sanitation
 * Track changes in operation of equipment
 * General office work such as organizing files and taking minutes at meetings
 
-### 2015 - 2020 | Waiter and Catering Assistant at Riella’s Homestyle Restaurant, Levittown NY
+2015 - 2020 | Waiter and Catering Assistant at Riella’s Homestyle Restaurant, Levittown NY
 * Wait and bus tables
 * Fulfillment catering orders, track inventory
 
