@@ -3,6 +3,7 @@ package main
 import (
 	"flag"
 	"os"
+	"website/markup"
 )
 
 var templateFile string
@@ -21,7 +22,7 @@ func main() {
 	}
 	defer f.Close()
 
-	m := ParseFromGemtext(f)
+	m := markup.ParseFromGemtext(f)
 	m.Gemtext(os.Stdout)
 	m.HTML(os.Stdout)
 }
