@@ -10,7 +10,8 @@
 ## Work Experience
 
 2021 -      | Software Engineer at Applied Visions, Inc., Northport NY
-* Worked on Full Stack of multiple web applications connected to same database
+* Worked on Full Stack of multiple web applications communicating with a RESTful API
+* Designed, coded, and tested security critical pieces of software, including our own OAuth implementation
 * Stack includes SQL, ASP.NET, Bootstrap, React.js
 
 2020 - 2021 | Software Engineering Intern at Applied Visions, Inc., Northport NY
@@ -28,9 +29,6 @@
 * Track changes in operation of equipment
 * General office work such as organizing files and taking minutes at meetings
 
-2015 - 2020 | Waiter and Catering Assistant at Riella’s Homestyle Restaurant, Levittown NY
-* Wait and bus tables
-* Fulfillment catering orders, track inventory
 
 ## Skills
 ### Computer Languages
@@ -57,3 +55,4 @@
 * Firebase #firebase
 * mongoDB #mongodb
 * Vim/neovim #vim-neovim
+* Visual Studio #vs
