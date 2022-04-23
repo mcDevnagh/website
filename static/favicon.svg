@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" height="1024" width="1024" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <rect x="0" y="0" rx="128" ry="128" height="1024" width="1024" fill="#39424e"/>
+    <g id="a" transform="matrix(0.43301270189 -.25 .25 0.43301270189 -64 196)">
+        <path id="b" fill="#4AF626" d="m 640 64 C 64 0 -128 256 320 864 L 64 992 L 64 1024 L 208 1024 L 416 928 C 429 922 429 828 416 816 C 96 512 32 64 640 128 z" />
+        <use xlink:href="#b" transform="matrix(1 0 0 -1 0 2046)" />
+    </g>
+    <use xlink:href="#a" transform="matrix(-1 0 0 -1 1024 1048)" />
+</svg>
