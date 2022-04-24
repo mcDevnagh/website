@@ -54,31 +54,31 @@ draft: false
     {{< resume-section title="Skills" >}}
         {{< resume-category title="Computer Languages" >}}
         <ul>
-            <li data-img="img/c.svg">C</li>
-            <li data-img="img/c-sharp.svg">C#</li>
-            <li data-img="img/java.svg">Java</li>
-            <li data-img="img/javascript.svg">JavaScript</li>
-            <li data-img="img/typescript.svg">TypeScript</li>
-            <li data-img="img/python.svg">Python</li>
-            <li data-img="img/bash.svg">Bash</li>
-            <li data-img="img/go.svg">Go</li>
-            <li data-img="img/sql.svg">SQL</li>
-            <li data-img="img/ocaml.svg">OCaml</li>
-            <li data-img="img/html.svg">HTML</li>
-            <li data-img="img/css.svg">CSS</li>
-            <li data-img="img/sass.svg">Sass</li>
+            <li><img src="/img/c.svg"> C</li>
+            <li><img src="/img/c-sharp.svg"> C#</li>
+            <li><img src="/img/java.svg"> Java</li>
+            <li><img src="/img/javascript.svg"> JavaScript</li>
+            <li><img src="/img/typescript.svg"> TypeScript</li>
+            <li><img src="/img/python.svg"> Python</li>
+            <li><img src="/img/bash.svg"> Bash</li>
+            <li><img src="/img/go.svg"> Go</li>
+            <li><img src="/img/sql.svg"> SQL</li>
+            <li><img src="/img/ocaml.svg"> OCaml</li>
+            <li><img src="/img/html.svg"> HTML</li>
+            <li><img src="/img/css.svg"> CSS</li>
+            <li><img src="/img/sass.svg"> Sass</li>
         </ul>
         {{< resume-category title="Other Technologies" >}}
         <ul>
-            <li data-img="img/git.svg">git</li>
-            <li data-img="img/tux.svg">GNU/Linux (or as I've recently taken to calling it, GNU plus Linux)</li>
-            <li data-img="img/dotnet.svg">ASP.NET (Core)</li>
-            <li data-img="img/node-js.svg">Node.js</li>
-            <li data-img="img/spring-boot.svg">Spring Boot</li>
-            <li data-img="img/react.svg">React</li>
-            <li data-img="img/firebase.svg">Firebase</li>
-            <li data-img="img/mongodb.svg">mongoDB</li>
-            <li data-img="img/neovim.svg">(neo)Vim</li>
+            <li><img src="/img/git.svg"> git</li>
+            <li><img src="/img/tux.svg"> GNU/Linux (or as I've recently taken to calling it, GNU plus Linux)</li>
+            <li><img src="/img/dotnet.svg"> ASP.NET (Core)</li>
+            <li><img src="/img/node-js.svg"> Node.js</li>
+            <li><img src="/img/spring-boot.svg"> Spring Boot</li>
+            <li><img src="/img/react.svg"> React</li>
+            <li><img src="/img/firebase.svg"> Firebase</li>
+            <li><img src="/img/mongodb.svg"> mongoDB</li>
+            <li><img src="/img/neovim.svg"> (neo)Vim</li>
         </ul>
     {{< /resume-section >}}
 {{< /container >}}
