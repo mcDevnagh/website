@@ -2,3 +2,12 @@ baseURL = "https://mcdonagh.dev/"
 languageCode = "en-us"
 title = "Michael McDonagh :)"
 theme = "notrack"
+
+[params]
+    author = "Michael McDonagh"
+    siteHeading = "Michael McDonagh"
+    favicon = "favicon.ico"
+
+    [params.social]
+        github="m-mcdonagh"
+        linkedin="michael-mcdonagh-18861a162"
