@@ -1,6 +1,6 @@
 baseURL = "https://mcdonagh.dev/"
 languageCode = "en-us"
-title = "Michael McDonagh :)"
+title = "Michael McDonagh"
 theme = "notrack"
 
 [params]
